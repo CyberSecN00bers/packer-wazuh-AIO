@@ -206,7 +206,7 @@ if ! grep -q 'rule id="100300"' "${RULES_FILE}"; then
   <!-- Generic AI event -->
   <rule id="100300" level="3">
     <decoded_as>json</decoded_as>
-    <field name="location">/opt/capstone-blueteam-agent/logs/ai_alerts.jsonl</field>
+    <location type="pcre2">ai_alerts\.jsonl$</location>
     <description>BlueTeam AI event detected: $(data.event_type)</description>
     <group>ai_alerts,web,</group>
   </rule>
@@ -214,8 +214,8 @@ if ! grep -q 'rule id="100300"' "${RULES_FILE}"; then
   <!-- Any malicious verdict from AI -->
   <rule id="100301" level="12">
     <if_sid>100300</if_sid>
-    <field name="data.is_malicious">^(true|True|TRUE)$</field>
-    <field name="data.verdict">^(malicious|Malicious|MALICIOUS)$</field>
+    <field name="data.is_malicious" type="pcre2">(?i)^true$</field>
+    <field name="data.verdict" type="pcre2">(?i)^malicious$</field>
     <description>BlueTeam AI malicious event: attack=$(data.ai_analysis.attack_type), srcip=$(data.network.srcip), uri=$(data.http.uri)</description>
     <group>attack,web,ai_alerts,</group>
   </rule>
@@ -223,7 +223,7 @@ if ! grep -q 'rule id="100300"' "${RULES_FILE}"; then
   <!-- Escalate critical AI events -->
   <rule id="100302" level="15">
     <if_sid>100301</if_sid>
-    <field name="data.ai_analysis.severity">^(critical|Critical|CRITICAL)$</field>
+    <field name="data.ai_analysis.severity" type="pcre2">(?i)^critical$</field>
     <description>BlueTeam AI critical malicious event: attack=$(data.ai_analysis.attack_type), mitre=$(data.threat_classification.mitre_attack_id)</description>
     <group>attack,web,high_risk,ai_alerts,</group>
   </rule>
