@@ -17,7 +17,7 @@ variable "cpu_cores" {
 
 variable "memory_mb" {
   type    = number
-  default = 8192
+  default = 16384
 }
 
 variable "disk_storage_pool" {
