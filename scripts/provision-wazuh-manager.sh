@@ -58,7 +58,7 @@ netplan generate >/dev/null 2>&1 || true
 # ----------------------------
 echo "[+] Installing prerequisites..."
 apt-get update -y >/dev/null 2>&1 || true
-apt-get install -y curl tar ca-certificates jq >/dev/null 2>&1 || true
+apt-get install -y curl tar ca-certificates jq libxml2-utils >/dev/null 2>&1 || true
 
 # ----------------------------
 # Wazuh AIO install (Quickstart)
@@ -232,11 +232,29 @@ if ! grep -q 'rule id="100300"' "${RULES_FILE}"; then
 EOF
 fi
 
-chown root:ossec "${RULES_FILE}" >/dev/null 2>&1 || true
+RULES_GROUP="ossec"
+if getent group wazuh >/dev/null 2>&1; then
+  RULES_GROUP="wazuh"
+elif getent group ossec >/dev/null 2>&1; then
+  RULES_GROUP="ossec"
+fi
+
+echo "[+] Installing BlueTeam AI JSON rules..."
+BLUETEAM_RULE_SRC="${SCRIPT_DIR}/wazuh-rules/1005-blueteam-web-json_rules.xml"
+BLUETEAM_RULE_DST="${RULES_DIR}/1005-blueteam-web-json_rules.xml"
+BLUETEAM_RULE_TMP="$(mktemp)"
+
+sed -e '1s/^\xEF\xBB\xBF//' -e 's/\r$//' "${BLUETEAM_RULE_SRC}" > "${BLUETEAM_RULE_TMP}"
+xmllint --noout "${BLUETEAM_RULE_TMP}"
+install -m 0640 "${BLUETEAM_RULE_TMP}" "${BLUETEAM_RULE_DST}"
+chown root:"${RULES_GROUP}" "${BLUETEAM_RULE_DST}" >/dev/null 2>&1 || true
+rm -f "${BLUETEAM_RULE_TMP}"
+
+chown root:"${RULES_GROUP}" "${RULES_FILE}" >/dev/null 2>&1 || true
 chmod 0640 "${RULES_FILE}" >/dev/null 2>&1 || true
 
 # Reload rules (restart manager)
-systemctl restart wazuh-manager >/dev/null 2>&1 || true
+systemctl restart wazuh-manager
 
 # ----------------------------
 # Disable Wazuh repo after install (recommended by docs)
