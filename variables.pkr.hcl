@@ -38,12 +38,12 @@ variable "iso_storage_pool" {
 
 variable "iso_url" {
   type    = string
-  default = "https://releases.ubuntu.com/24.04/ubuntu-24.04.3-live-server-amd64.iso"
+  default = "https://releases.ubuntu.com/releases/24.04.3/ubuntu-24.04.3-live-server-amd64.iso"
 }
 
 variable "iso_checksum" {
   type    = string
-  default = "file:https://releases.ubuntu.com/24.04/SHA256SUMS"
+  default = "sha256:c3514bf0056180d09376462a7a1b4f213c1d6e8ea67fae5c25099c6fd3d8274b"
 }
 
 variable "mgmt_bridge" {
