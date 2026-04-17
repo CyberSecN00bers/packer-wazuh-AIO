@@ -22,7 +22,9 @@ autoinstall:
   network:
     version: 2
     ethernets:
-      ens18:
+      eth0:
+        match:
+          name: "en*"
         dhcp4: true
         dhcp6: false
         optional: true

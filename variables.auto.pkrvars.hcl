@@ -9,7 +9,7 @@ iso_storage_pool        = "ssd-storage"
 cloud_init_storage_pool = "local-lvm"
 
 # ===== SSH key-based =====
-ssh_username         = "root"
+ssh_username         = "ubuntu"
 vm_interface         = "ens18"
 
 # ===== Proxmox connection =====
